@@ -6,6 +6,7 @@ Speed Test CLI - Test your internet speed from the command line.
 import speedtest
 import argparse
 import json
+import csv
 from datetime import datetime
 from pathlib import Path
 
@@ -42,10 +43,10 @@ class SpeedTestRunner:
             st.get_best_server()
             
             print("Testing download speed...")
-            download = st.download() / 1_000_000  # Convert to Mbps
+            download = st.download() / 1_000_000
             
             print("Testing upload speed...")
-            upload = st.upload() / 1_000_000  # Convert to Mbps
+            upload = st.upload() / 1_000_000
             
             ping = st.results.ping
             
@@ -117,7 +118,7 @@ class SpeedTestRunner:
         print(f"{'Date':<25} {'Download (Mbps)':<20} {'Upload (Mbps)':<20}")
         print("-"*70)
         
-        for result in history[-10:]:  # Show last 10 tests
+        for result in history[-10:]:
             date = result['timestamp'].split('T')[0]
             download = result['download_mbps']
             upload = result['upload_mbps']
@@ -150,6 +151,36 @@ class SpeedTestRunner:
         print(f"Avg Upload:     {round(avg_upload, 2)} Mbps")
         
         print("\n" + "="*50 + "\n")
+    
+    def export_to_csv(self, output_file='speedtest_results.csv'):
+        """
+        Export history to CSV file.
+        
+        Args:
+            output_file: Name of CSV file to create
+        """
+        if not self.history_file.exists():
+            print("No history found. Run a test first.")
+            return
+        
+        with open(self.history_file, 'r') as f:
+            history = json.load(f)
+        
+        if not history:
+            print("No test data available.")
+            return
+        
+        try:
+            with open(output_file, 'w', newline='') as csvfile:
+                fieldnames = ['timestamp', 'download_mbps', 'upload_mbps', 'ping_ms', 'server', 'location']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                
+                writer.writeheader()
+                writer.writerows(history)
+            
+            print(f"Results exported to {output_file}")
+        except Exception as e:
+            print(f"Error exporting to CSV: {e}")
 
 
 def main():
@@ -160,9 +191,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python speedtest_cli.py
-  python speedtest_cli.py --history
-  python speedtest_cli.py --average
+  python speedtest_cli.py                 # Run a speed test
+  python speedtest_cli.py --history       # Show test history
+  python speedtest_cli.py --average       # Show average speeds
+  python speedtest_cli.py --export        # Export to CSV
+  python speedtest_cli.py --simple        # Faster test
         """
     )
     
@@ -172,6 +205,8 @@ Examples:
                        help='Show average speeds from all tests')
     parser.add_argument('--simple', action='store_true',
                        help='Run faster test (less accurate)')
+    parser.add_argument('--export', action='store_true',
+                       help='Export test history to CSV')
     
     args = parser.parse_args()
     
@@ -181,6 +216,8 @@ Examples:
         runner.show_history()
     elif args.average:
         runner.show_average()
+    elif args.export:
+        runner.export_to_csv()
     else:
         try:
             results = runner.run_test()
