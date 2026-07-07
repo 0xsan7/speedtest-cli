@@ -1,81 +1,66 @@
 # Speed Test CLI
 
-Test your internet speed directly from the command line. No browser needed.
+Professional internet speed testing tool for the command line. Test your download/upload speeds and track trends over time.
 
-![Python](https://img.shields.io/badge/Python-3.7+-blue)
+[![Tests](https://github.com/0xsan7/speedtest-cli/actions/workflows/test.yml/badge.svg)](https://github.com/0xsan7/speedtest-cli/actions)
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 
 ## Features
 
 - Test download and upload speeds
 - Measure ping/latency
-- Track test history
+- Track test history in JSON format
+- Export results to CSV
 - View average speeds over time
-- Simple, fast command-line interface
+- Simple mode for faster testing
+- Cross-platform (Mac, Linux, Windows)
+- Production-ready code
 
 ## Installation
 
+### Option 1: From source
+```bash
+git clone https://github.com/0xsan7/speedtest-cli.git
+cd speedtest-cli
+pip install -e .
+```
+
+### Option 2: Using pip
 ```bash
 pip install -r requirements.txt
+python speedtest_cli.py
 ```
 
 ## Usage
 
 ### Run a speed test
-
 ```bash
 python speedtest_cli.py
 ```
 
-This will:
-1. Find the best server near you
-2. Test download speed
-3. Test upload speed
-4. Display results
-5. Save results to history
-
 ### View test history
-
 ```bash
 python speedtest_cli.py --history
 ```
 
-Shows your last 10 speed tests in a table.
-
 ### View average speeds
-
 ```bash
 python speedtest_cli.py --average
 ```
 
-Shows average download/upload speeds from all your tests.
+### Export to CSV
+```bash
+python speedtest_cli.py --export
+```
 
 ### Faster testing
-
 ```bash
 python speedtest_cli.py --simple
 ```
 
-Runs a faster test (less accurate but quicker).
-
-## Examples
-
-Run a standard test:
-```bash
-python speedtest_cli.py
-```
-
-Check how your speed has been over time:
-```bash
-python speedtest_cli.py --history
-```
-
-See your average internet speed:
-```bash
-python speedtest_cli.py --average
-```
-
-## Output
+## Output Example
 ==================================================
 SPEED TEST RESULTS
 Download Speed: 95.47 Mbps
@@ -83,44 +68,46 @@ Upload Speed:   50.23 Mbps
 Ping:           12.45 ms
 Server:         ISP Server
 Location:       City, Country
-Timestamp:      2024-07-05T12:30:45.123456
+Timestamp:      2026-07-06T20:39:44.255653
 ==================================================
 Results saved to speedtest_history.json
+## Data Storage
+
+- Results are stored in `speedtest_history.json` (JSON format)
+- Export to `speedtest_results.csv` for use in spreadsheets
+- All data stored locally on your machine
+- No data sent to third parties except Speedtest.net
+
 ## Requirements
 
-- Python 3.7+
+- Python 3.9 or higher
 - speedtest-cli library
 
-## How It Works
+## Documentation
 
-1. Connects to Speedtest.net servers
-2. Finds the best server near your location
-3. Tests download speed (how fast data comes to you)
-4. Tests upload speed (how fast data goes from you)
-5. Measures ping (connection latency)
-6. Saves results to a JSON file for tracking
+- [EXAMPLES.md](EXAMPLES.md) - Advanced usage examples
+- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
+- [CHANGELOG.md](CHANGELOG.md) - Release history
 
-## Tips
+## Performance
 
-- First test may take longer as it finds the best server
-- Run multiple tests at different times to track trends
-- History is saved in `speedtest_history.json`
-- Use `--average` to see if your internet is improving/degrading
-
-## Limitations
-
-- Requires active internet connection
-- Speedtest.net must be accessible
-- Results depend on network conditions at test time
+- Typical test: 30-60 seconds
+- Download/upload measured in Mbps
+- Ping measured in milliseconds
+- Results accurate to 2 decimal places
 
 ## License
 
-MIT License - see LICENSE file
+MIT License - see [LICENSE](LICENSE) file
+
+## Author
+
+Made by [0xsan7](https://github.com/0xsan7)
 
 ## Contributing
 
-Found a bug? Have a feature idea? Open an issue or submit a PR!
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-Made by 0xsan7
+**Status:** Production Ready | **Version:** 1.0.0 | **Last Updated:** 2026-07-06
