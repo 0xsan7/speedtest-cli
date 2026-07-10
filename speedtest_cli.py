@@ -7,8 +7,21 @@ import speedtest
 import argparse
 import json
 import csv
+import logging
 from datetime import datetime
 from pathlib import Path
+
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('speedtest.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 
 class SpeedTestRunner:
@@ -25,6 +38,7 @@ class SpeedTestRunner:
         """
         self.simple = simple
         self.history_file = Path(self.HISTORY_FILE)
+        logger.info("Speed Test Runner initialized")
     
     def run_test(self):
         """
@@ -33,24 +47,28 @@ class SpeedTestRunner:
         Returns:
             Dictionary with test results
         """
+        logger.info("Starting speed test...")
         print("Starting speed test...")
         print("(This may take 30-60 seconds)\n")
         
         try:
             st = speedtest.Speedtest()
             
+            logger.info("Finding best server...")
             print("Finding best server...")
             st.get_best_server()
             
+            logger.info("Testing download speed...")
             print("Testing download speed...")
             download = st.download() / 1_000_000
             
+            logger.info("Testing upload speed...")
             print("Testing upload speed...")
             upload = st.upload() / 1_000_000
             
             ping = st.results.ping
             
-            return {
+            result = {
                 'timestamp': datetime.now().isoformat(),
                 'download_mbps': round(download, 2),
                 'upload_mbps': round(upload, 2),
@@ -58,8 +76,12 @@ class SpeedTestRunner:
                 'server': st.results.server['sponsor'],
                 'location': f"{st.results.server['name']}, {st.results.server['country']}"
             }
+            
+            logger.info(f"Test completed - Download: {result['download_mbps']} Mbps, Upload: {result['upload_mbps']} Mbps")
+            return result
         
         except Exception as e:
+            logger.error(f"Speed test failed: {e}")
             raise RuntimeError(f"Speed test failed: {e}")
     
     def display_results(self, results):
@@ -100,16 +122,20 @@ class SpeedTestRunner:
         with open(self.history_file, 'w') as f:
             json.dump(history, f, indent=2)
         
+        logger.info(f"Results saved to {self.HISTORY_FILE}")
         print(f"Results saved to {self.HISTORY_FILE}")
     
     def show_history(self):
         """Display test history."""
         if not self.history_file.exists():
+            logger.warning("No history found")
             print("No history found. Run a test first.")
             return
         
         with open(self.history_file, 'r') as f:
             history = json.load(f)
+        
+        logger.info(f"Displaying history with {len(history)} records")
         
         print("\n" + "="*70)
         print("SPEED TEST HISTORY".center(70))
@@ -129,6 +155,7 @@ class SpeedTestRunner:
     def show_average(self):
         """Show average speeds from history."""
         if not self.history_file.exists():
+            logger.warning("No history found")
             print("No history found. Run a test first.")
             return
         
@@ -136,11 +163,14 @@ class SpeedTestRunner:
             history = json.load(f)
         
         if not history:
+            logger.warning("No test data available")
             print("No test data available.")
             return
         
         avg_download = sum(r['download_mbps'] for r in history) / len(history)
         avg_upload = sum(r['upload_mbps'] for r in history) / len(history)
+        
+        logger.info(f"Average speeds - Download: {round(avg_download, 2)} Mbps, Upload: {round(avg_upload, 2)} Mbps")
         
         print("\n" + "="*50)
         print("AVERAGE SPEEDS".center(50))
@@ -160,6 +190,7 @@ class SpeedTestRunner:
             output_file: Name of CSV file to create
         """
         if not self.history_file.exists():
+            logger.warning("No history found for export")
             print("No history found. Run a test first.")
             return
         
@@ -167,6 +198,7 @@ class SpeedTestRunner:
             history = json.load(f)
         
         if not history:
+            logger.warning("No test data available for export")
             print("No test data available.")
             return
         
@@ -178,8 +210,10 @@ class SpeedTestRunner:
                 writer.writeheader()
                 writer.writerows(history)
             
+            logger.info(f"Results exported to {output_file}")
             print(f"Results exported to {output_file}")
         except Exception as e:
+            logger.error(f"Error exporting to CSV: {e}")
             print(f"Error exporting to CSV: {e}")
 
 
