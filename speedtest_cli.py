@@ -7,21 +7,20 @@ import speedtest
 import argparse
 import json
 import csv
-import logging
 from datetime import datetime
 from pathlib import Path
 
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('speedtest.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+class Colors:
+    """ANSI color codes for terminal output."""
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
 
 
 class SpeedTestRunner:
@@ -29,16 +28,23 @@ class SpeedTestRunner:
     
     HISTORY_FILE = 'speedtest_history.json'
     
-    def __init__(self, simple=False):
+    def __init__(self, simple=False, color=True):
         """
         Initialize Speed Test Runner.
         
         Args:
             simple: If True, run faster tests with fewer threads
+            color: If True, use colored output
         """
         self.simple = simple
+        self.color = color
         self.history_file = Path(self.HISTORY_FILE)
-        logger.info("Speed Test Runner initialized")
+    
+    def _colorize(self, text, color_code):
+        """Apply color to text if color is enabled."""
+        if self.color:
+            return f"{color_code}{text}{Colors.RESET}"
+        return text
     
     def run_test(self):
         """
@@ -47,28 +53,24 @@ class SpeedTestRunner:
         Returns:
             Dictionary with test results
         """
-        logger.info("Starting speed test...")
-        print("Starting speed test...")
-        print("(This may take 30-60 seconds)\n")
+        print(self._colorize("Starting speed test...", Colors.CYAN))
+        print(self._colorize("(This may take 30-60 seconds)\n", Colors.YELLOW))
         
         try:
             st = speedtest.Speedtest()
             
-            logger.info("Finding best server...")
-            print("Finding best server...")
+            print(self._colorize("Finding best server...", Colors.BLUE))
             st.get_best_server()
             
-            logger.info("Testing download speed...")
-            print("Testing download speed...")
+            print(self._colorize("Testing download speed...", Colors.BLUE))
             download = st.download() / 1_000_000
             
-            logger.info("Testing upload speed...")
-            print("Testing upload speed...")
+            print(self._colorize("Testing upload speed...", Colors.BLUE))
             upload = st.upload() / 1_000_000
             
             ping = st.results.ping
             
-            result = {
+            return {
                 'timestamp': datetime.now().isoformat(),
                 'download_mbps': round(download, 2),
                 'upload_mbps': round(upload, 2),
@@ -76,12 +78,8 @@ class SpeedTestRunner:
                 'server': st.results.server['sponsor'],
                 'location': f"{st.results.server['name']}, {st.results.server['country']}"
             }
-            
-            logger.info(f"Test completed - Download: {result['download_mbps']} Mbps, Upload: {result['upload_mbps']} Mbps")
-            return result
         
         except Exception as e:
-            logger.error(f"Speed test failed: {e}")
             raise RuntimeError(f"Speed test failed: {e}")
     
     def display_results(self, results):
@@ -91,18 +89,22 @@ class SpeedTestRunner:
         Args:
             results: Dictionary with test results
         """
-        print("\n" + "="*50)
-        print("SPEED TEST RESULTS".center(50))
-        print("="*50 + "\n")
+        print("\n" + self._colorize("="*50, Colors.HEADER))
+        print(self._colorize("SPEED TEST RESULTS".center(50), Colors.BOLD))
+        print(self._colorize("="*50, Colors.HEADER) + "\n")
         
-        print(f"Download Speed: {results['download_mbps']} Mbps")
-        print(f"Upload Speed:   {results['upload_mbps']} Mbps")
-        print(f"Ping:           {results['ping_ms']} ms")
+        download = self._colorize(f"{results['download_mbps']} Mbps", Colors.GREEN)
+        upload = self._colorize(f"{results['upload_mbps']} Mbps", Colors.GREEN)
+        ping = self._colorize(f"{results['ping_ms']} ms", Colors.YELLOW)
+        
+        print(f"Download Speed: {download}")
+        print(f"Upload Speed:   {upload}")
+        print(f"Ping:           {ping}")
         print(f"Server:         {results['server']}")
         print(f"Location:       {results['location']}")
         print(f"Timestamp:      {results['timestamp']}")
         
-        print("\n" + "="*50 + "\n")
+        print("\n" + self._colorize("="*50, Colors.HEADER) + "\n")
     
     def save_to_history(self, results):
         """
@@ -122,27 +124,23 @@ class SpeedTestRunner:
         with open(self.history_file, 'w') as f:
             json.dump(history, f, indent=2)
         
-        logger.info(f"Results saved to {self.HISTORY_FILE}")
-        print(f"Results saved to {self.HISTORY_FILE}")
+        print(self._colorize(f"Results saved to {self.HISTORY_FILE}", Colors.GREEN))
     
     def show_history(self):
         """Display test history."""
         if not self.history_file.exists():
-            logger.warning("No history found")
-            print("No history found. Run a test first.")
+            print(self._colorize("No history found. Run a test first.", Colors.RED))
             return
         
         with open(self.history_file, 'r') as f:
             history = json.load(f)
         
-        logger.info(f"Displaying history with {len(history)} records")
-        
-        print("\n" + "="*70)
-        print("SPEED TEST HISTORY".center(70))
-        print("="*70 + "\n")
+        print("\n" + self._colorize("="*70, Colors.HEADER))
+        print(self._colorize("SPEED TEST HISTORY".center(70), Colors.BOLD))
+        print(self._colorize("="*70, Colors.HEADER) + "\n")
         
         print(f"{'Date':<25} {'Download (Mbps)':<20} {'Upload (Mbps)':<20}")
-        print("-"*70)
+        print(self._colorize("-"*70, Colors.CYAN))
         
         for result in history[-10:]:
             date = result['timestamp'].split('T')[0]
@@ -150,37 +148,33 @@ class SpeedTestRunner:
             upload = result['upload_mbps']
             print(f"{date:<25} {download:<20} {upload:<20}")
         
-        print("\n" + "="*70 + "\n")
+        print("\n" + self._colorize("="*70, Colors.HEADER) + "\n")
     
     def show_average(self):
         """Show average speeds from history."""
         if not self.history_file.exists():
-            logger.warning("No history found")
-            print("No history found. Run a test first.")
+            print(self._colorize("No history found. Run a test first.", Colors.RED))
             return
         
         with open(self.history_file, 'r') as f:
             history = json.load(f)
         
         if not history:
-            logger.warning("No test data available")
-            print("No test data available.")
+            print(self._colorize("No test data available.", Colors.RED))
             return
         
         avg_download = sum(r['download_mbps'] for r in history) / len(history)
         avg_upload = sum(r['upload_mbps'] for r in history) / len(history)
         
-        logger.info(f"Average speeds - Download: {round(avg_download, 2)} Mbps, Upload: {round(avg_upload, 2)} Mbps")
-        
-        print("\n" + "="*50)
-        print("AVERAGE SPEEDS".center(50))
-        print("="*50 + "\n")
+        print("\n" + self._colorize("="*50, Colors.HEADER))
+        print(self._colorize("AVERAGE SPEEDS".center(50), Colors.BOLD))
+        print(self._colorize("="*50, Colors.HEADER) + "\n")
         
         print(f"Tests Run:      {len(history)}")
-        print(f"Avg Download:   {round(avg_download, 2)} Mbps")
-        print(f"Avg Upload:     {round(avg_upload, 2)} Mbps")
+        print(self._colorize(f"Avg Download:   {round(avg_download, 2)} Mbps", Colors.GREEN))
+        print(self._colorize(f"Avg Upload:     {round(avg_upload, 2)} Mbps", Colors.GREEN))
         
-        print("\n" + "="*50 + "\n")
+        print("\n" + self._colorize("="*50, Colors.HEADER) + "\n")
     
     def export_to_csv(self, output_file='speedtest_results.csv'):
         """
@@ -190,16 +184,14 @@ class SpeedTestRunner:
             output_file: Name of CSV file to create
         """
         if not self.history_file.exists():
-            logger.warning("No history found for export")
-            print("No history found. Run a test first.")
+            print(self._colorize("No history found. Run a test first.", Colors.RED))
             return
         
         with open(self.history_file, 'r') as f:
             history = json.load(f)
         
         if not history:
-            logger.warning("No test data available for export")
-            print("No test data available.")
+            print(self._colorize("No test data available.", Colors.RED))
             return
         
         try:
@@ -210,11 +202,9 @@ class SpeedTestRunner:
                 writer.writeheader()
                 writer.writerows(history)
             
-            logger.info(f"Results exported to {output_file}")
-            print(f"Results exported to {output_file}")
+            print(self._colorize(f"Results exported to {output_file}", Colors.GREEN))
         except Exception as e:
-            logger.error(f"Error exporting to CSV: {e}")
-            print(f"Error exporting to CSV: {e}")
+            print(self._colorize(f"Error exporting to CSV: {e}", Colors.RED))
 
 
 def main():
@@ -230,6 +220,7 @@ Examples:
   python speedtest_cli.py --average       # Show average speeds
   python speedtest_cli.py --export        # Export to CSV
   python speedtest_cli.py --simple        # Faster test
+  python speedtest_cli.py --no-color      # Disable colored output
         """
     )
     
@@ -241,10 +232,12 @@ Examples:
                        help='Run faster test (less accurate)')
     parser.add_argument('--export', action='store_true',
                        help='Export test history to CSV')
+    parser.add_argument('--no-color', action='store_true',
+                       help='Disable colored output')
     
     args = parser.parse_args()
     
-    runner = SpeedTestRunner(simple=args.simple)
+    runner = SpeedTestRunner(simple=args.simple, color=not args.no_color)
     
     if args.history:
         runner.show_history()
@@ -258,7 +251,7 @@ Examples:
             runner.display_results(results)
             runner.save_to_history(results)
         except RuntimeError as e:
-            print(f"Error: {e}")
+            print(runner._colorize(f"Error: {e}", Colors.RED))
 
 
 if __name__ == '__main__':
