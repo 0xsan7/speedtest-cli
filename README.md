@@ -106,7 +106,6 @@ Location: Pune, India
 Timestamp: 2026-07-06T20:39:44.255653
 ==================================================
 Results saved to speedtest_history.json
-
 ## Usage
 
 Basic Speed Test:
@@ -132,6 +131,12 @@ python speedtest_cli.py --average
 ```
 
 Output:
+==================================================
+AVERAGE SPEEDS
+Tests Run: 3
+Avg Download: 91.63 Mbps
+Avg Upload: 49.81 Mbps
+==================================================
 Export to CSV:
 ```bash
 python speedtest_cli.py --export
@@ -208,4 +213,100 @@ Test Performance Specifications:
 - Data Usage: 50-100 MB per test
 - Memory Usage: 20-30 MB
 - CPU Usage: Moderate during testing
+
+## Documentation
+
+Additional Guides:
+- EXAMPLES.md - Advanced usage and real-world examples
+- BENCHMARKS.md - Detailed internet speed standards
+- TROUBLESHOOTING.md - Common issues and solutions
+- CONTRIBUTING.md - How to contribute to project
+- CHANGELOG.md - Version history and features
+
+## Data and Privacy
+
+Storage:
+- All test results stored locally in speedtest_history.json
+- Data never leaves your machine except to Speedtest.net
+- Export to CSV for backup or analysis
+
+Privacy:
+- No tracking or analytics
+- No account required
+- No personal information collected
+- Open source and auditable code
+
+Security:
+- All connections to Speedtest.net use HTTPS encryption
+- No external API keys required
+- Code is signed and verified
+
+## Requirements
+
+- Python 3.9 or higher
+- Operating System: macOS, Linux, or Windows
+- Active internet connection
+- Dependencies listed in requirements.txt
+
+## License
+
+MIT License - Full details in LICENSE file
+
+Permissions:
+- Commercial use allowed
+- Modification allowed
+- Distribution allowed
+- Private use allowed
+
+Conditions:
+- Include license notice
+- State changes made
+
+## Contributing
+
+Contributions are welcome and appreciated.
+
+How to Contribute:
+1. Fork repository
+2. Create feature branch
+3. Make changes
+4. Test thoroughly
+5. Submit pull request
+
+See CONTRIBUTING.md for detailed guidelines.
+
+Types of Contributions:
+- Bug reports with details
+- Feature suggestions
+- Code improvements
+- Documentation updates
+- Testing on different systems
+
+## Support and Contact
+
+Issues and Questions:
+- GitHub Issues: https://github.com/0xsan7/speedtest-cli/issues
+- Email: santiagojerald734@gmail.com
+- Documentation: See guides listed above
+
+## Author
+
+Santiago Jerald (0xsan7)
+- GitHub: https://github.com/0xsan7
+- Email: santiagojerald734@gmail.com
+- Location: Pune, India
+
+## Acknowledgments
+
+Built with:
+- speedtest-cli library for speed testing
+- Python programming language
+- GitHub Actions for CI/CD
+- Open source community support
+
+---
+
+Status: Production Ready | Version: 1.0.0 | Last Updated: 2026-07-06
+
+Copyright 2026 0xsan7. Licensed under MIT License.
 
