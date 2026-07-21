@@ -45,3 +45,65 @@ Developer Features:
 - Pip Installable - pip install support via setup.py
 - Development Tools - Makefile, linting, testing
 
+## Installation
+
+Minimum Requirements:
+- Python 3.9 or higher
+- pip package manager
+- Active internet connection
+
+Installation Options:
+
+Option 1: Clone from GitHub (Recommended)
+```bash
+git clone https://github.com/0xsan7/speedtest-cli.git
+cd speedtest-cli
+pip install -r requirements.txt
+```
+
+Option 2: Quick Install
+```bash
+pip install -r requirements.txt
+python speedtest_cli.py
+```
+
+Option 3: Development Setup
+```bash
+git clone https://github.com/0xsan7/speedtest-cli.git
+cd speedtest-cli
+pip install -e .
+speedtest
+```
+
+Verify Installation:
+```bash
+python speedtest_cli.py --help
+```
+
+## Quick Start
+
+Run Your First Speed Test:
+```bash
+python speedtest_cli.py
+```
+
+This will:
+1. Find the best server near you
+2. Test your download speed
+3. Test your upload speed
+4. Measure your ping
+5. Display results
+6. Save to history
+
+Expected Output:
+==================================================
+SPEED TEST RESULTS
+==================================================
+Download Speed: 95.47 Mbps
+Upload Speed: 50.23 Mbps
+Ping: 12.45 ms
+Server: ISP Server
+Location: Pune, India
+Timestamp: 2026-07-06T20:39:44.255653
+==================================================
+Results saved to speedtest_history.json
