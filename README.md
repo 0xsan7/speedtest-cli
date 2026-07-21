@@ -106,6 +106,7 @@ Location: Pune, India
 Timestamp: 2026-07-06T20:39:44.255653
 ==================================================
 Results saved to speedtest_history.json
+
 ## Usage
 
 Basic Speed Test:
@@ -131,12 +132,6 @@ python speedtest_cli.py --average
 ```
 
 Output:
-==================================================
-AVERAGE SPEEDS
-Tests Run: 3
-Avg Download: 91.63 Mbps
-Avg Upload: 49.81 Mbps
-==================================================
 Export to CSV:
 ```bash
 python speedtest_cli.py --export
@@ -169,4 +164,48 @@ Command Reference:
 | --simple | Run faster test (less accurate) |
 | --no-color | Disable colored output |
 | --help | Show help message |
+
+## Performance Benchmarks
+
+What is Good Internet Speed?
+
+Excellent Connection (95th percentile):
+- Download: 100+ Mbps
+- Upload: 20+ Mbps
+- Ping: 0-20 ms
+
+Good Connection (75th percentile):
+- Download: 50-100 Mbps
+- Upload: 10-20 Mbps
+- Ping: 20-50 ms
+
+Average Connection (50th percentile):
+- Download: 20-50 Mbps
+- Upload: 5-10 Mbps
+- Ping: 50-100 ms
+
+Poor Connection (Below 50th percentile):
+- Download: Below 20 Mbps
+- Upload: Below 5 Mbps
+- Ping: Above 100 ms
+
+Minimum Speeds for Common Activities:
+
+| Activity | Minimum | Recommended |
+|----------|---------|------------|
+| Email/Browsing | 1 Mbps | 5 Mbps |
+| HD Streaming | 5 Mbps | 10 Mbps |
+| 4K Streaming | 25 Mbps | 50 Mbps |
+| Video Conferencing | 2.5 Mbps | 5 Mbps |
+| Online Gaming | 5 Mbps | 20+ Mbps |
+| Large File Downloads | 10 Mbps | 50+ Mbps |
+
+Test Performance Specifications:
+
+- Test Duration: 30-60 seconds (standard), 10-20 seconds (simple mode)
+- Accuracy: +/- 5% (typical)
+- Server Selection: Automatic (nearest server)
+- Data Usage: 50-100 MB per test
+- Memory Usage: 20-30 MB
+- CPU Usage: Moderate during testing
 
