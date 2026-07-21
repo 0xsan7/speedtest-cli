@@ -98,7 +98,6 @@ This will:
 Expected Output:
 ==================================================
 SPEED TEST RESULTS
-==================================================
 Download Speed: 95.47 Mbps
 Upload Speed: 50.23 Mbps
 Ping: 12.45 ms
@@ -107,3 +106,67 @@ Location: Pune, India
 Timestamp: 2026-07-06T20:39:44.255653
 ==================================================
 Results saved to speedtest_history.json
+## Usage
+
+Basic Speed Test:
+```bash
+python speedtest_cli.py
+```
+
+View Test History:
+```bash
+python speedtest_cli.py --history
+```
+
+Output Format:
+======================================================================
+SPEED TEST HISTORY
+Date Download (Mbps) Upload (Mbps)
+2026-07-06 95.47 50.23
+2026-07-05 87.32 48.15
+2026-07-04 92.11 51.04
+View Average Speeds:
+```bash
+python speedtest_cli.py --average
+```
+
+Output:
+==================================================
+AVERAGE SPEEDS
+Tests Run: 3
+Avg Download: 91.63 Mbps
+Avg Upload: 49.81 Mbps
+==================================================
+Export to CSV:
+```bash
+python speedtest_cli.py --export
+```
+
+Creates speedtest_results.csv with all historical data for spreadsheet analysis.
+
+Faster Testing:
+```bash
+python speedtest_cli.py --simple
+```
+
+Uses fewer threads for quicker results (less accurate).
+
+Disable Colors:
+```bash
+python speedtest_cli.py --no-color
+```
+
+For piping output or non-color terminals.
+
+Command Reference:
+
+| Command | Description |
+|---------|-------------|
+| python speedtest_cli.py | Run a full speed test |
+| --history | Show test history (last 10) |
+| --average | Show average speeds from all tests |
+| --export | Export history to CSV file |
+| --simple | Run faster test (less accurate) |
+| --no-color | Disable colored output |
+| --help | Show help message |
+
